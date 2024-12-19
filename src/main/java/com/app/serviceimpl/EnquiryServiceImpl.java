@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import com.app.entity.Enquiry;
+import com.app.entity.EnquiryStatus;
 import com.app.repository.EnquiryRepository;
 import com.app.service.EnquiryService;
 
@@ -40,6 +41,9 @@ public class EnquiryServiceImpl implements EnquiryService {
 
 	@Override
 	public Enquiry addData(Enquiry enquiry) {
+
+		// enquiry.setStatus(EnquiryStatus.Register);
+
 		return enquiryRepository.save(enquiry);
 	}
 
@@ -84,12 +88,26 @@ public class EnquiryServiceImpl implements EnquiryService {
 			}
 			if (enquiryDetails.getEmail() != null) {
 				existingsavedData.setEmail(enquiryDetails.getEmail());
-
+			}
+			if (enquiryDetails.getStatus() != null) {
+				existingsavedData.setStatus(enquiryDetails.getStatus());
 			}
 
 			return enquiryRepository.save(existingsavedData);
 		}
 
 		return null;
+	}
+
+//	@Override
+//	public List<Enquiry> searchEnquiryByStatus(String status) {
+//
+//		return enquiryRepository.findAllByStatus(status);
+//	}
+
+	@Override
+	public List<Enquiry> searchEnquiryByStatus(EnquiryStatus enquiryStatus) {
+
+		return enquiryRepository.findAllByStatus(enquiryStatus);
 	}
 }

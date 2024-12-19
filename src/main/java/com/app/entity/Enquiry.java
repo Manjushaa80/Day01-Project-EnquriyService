@@ -31,7 +31,7 @@ public class Enquiry {
 	private Date enquiryDateTime;
 	@Enumerated(EnumType.STRING)
 	private EnquiryStatus status;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE.DETACH.REMOVE.REFRESH)
 	private Cibil cibil;
 
 }
