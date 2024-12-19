@@ -3,6 +3,7 @@ package com.app.service;
 import java.util.List;
 
 import com.app.entity.Enquiry;
+import com.app.entity.EnquiryStatus;
 
 public interface EnquiryService {
 
@@ -14,5 +15,7 @@ public interface EnquiryService {
 	Enquiry addData(Enquiry enquiry);
 	Enquiry getEnquiry(Integer customerID);
 
+	List<Enquiry> searchEnquiryByStatus(EnquiryStatus enquiryStatus);
+	
 
 }

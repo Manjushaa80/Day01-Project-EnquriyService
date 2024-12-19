@@ -1,4 +1,6 @@
 package com.app.dto;
+import com.app.entity.EnquiryStatus;
+
 import lombok.Data;
 
 @Data
@@ -11,6 +13,7 @@ public class EnquiryResponseDTO
 	private String email;
 	private Long mobileNo;
 	private String pancardNo;
+	private EnquiryStatus status;
 
 
 

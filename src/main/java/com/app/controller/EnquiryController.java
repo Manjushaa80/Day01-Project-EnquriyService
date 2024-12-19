@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.EnquiryRequestDTO;
 import com.app.dto.EnquiryResponseDTO;
 import com.app.entity.Enquiry;
+import com.app.entity.EnquiryStatus;
 import com.app.exception.EnquiryNotFoundException;
 import com.app.resource.EnquiryResource;
 import com.app.service.EnquiryService;
@@ -30,7 +32,7 @@ public class EnquiryController {
 	@Autowired
 	private EnquiryService enquiryService;
 
-	 private EnquiryResource enquiryResource;
+	private EnquiryResource enquiryResource;
 
 	public EnquiryController(EnquiryResource enquiryResource) {
 		super();
@@ -38,7 +40,8 @@ public class EnquiryController {
 	}
 
 	@PutMapping(value = "/edit-enquiry/{customerID}")
-	public ResponseEntity<Enquiry> editEnquiry(@PathVariable int customerID, @RequestBody Enquiry enquiryDetails) {
+	public ResponseEntity<Enquiry> editEnquiry(@PathVariable int customerID, @RequestBody Enquiry enquiryDetails)
+			throws EnquiryNotFoundException {
 
 		Enquiry editedData = enquiryService.editEnquiry(customerID, enquiryDetails);
 
@@ -46,27 +49,29 @@ public class EnquiryController {
 			return new ResponseEntity<Enquiry>(editedData, HttpStatus.OK);
 		}
 
-		return new ResponseEntity<Enquiry>(HttpStatus.NO_CONTENT);
+		throw new EnquiryNotFoundException("Enquiry not found");
 	}
 
 	@PatchMapping(value = "/update-enquiry-status/{customerID}")
-	public ResponseEntity<Enquiry> updateEnquiry(@PathVariable int customerID, @RequestBody Enquiry enquiryDetails) {
+	public ResponseEntity<Enquiry> updateEnquiry(@PathVariable int customerID, @RequestBody Enquiry enquiryDetails)
+			throws EnquiryNotFoundException {
 
 		Enquiry updateEnquiry = enquiryService.updateEnquiry(customerID, enquiryDetails);
 
 		if (updateEnquiry != null) {
 			return new ResponseEntity<Enquiry>(updateEnquiry, HttpStatus.OK);
 		}
-		return new ResponseEntity<Enquiry>(HttpStatus.NO_CONTENT);
+		throw new EnquiryNotFoundException("Enquiry not found");
 	}
 
 	@DeleteMapping("/delete-enquiry/{customerID}")
-	public ResponseEntity<Void> deleteEnquiry(@PathVariable Integer customerID) {
+	public ResponseEntity<Void> deleteEnquiry(@PathVariable Integer customerID) throws EnquiryNotFoundException {
 		Boolean flag = enquiryService.deleteEnquiry(customerID);
 		if (flag) {
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		}
-		return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+		throw new EnquiryNotFoundException("Enquiry not found");
+
 	}
 
 	@GetMapping(value = "/expose-enquiries")
@@ -81,14 +86,12 @@ public class EnquiryController {
 
 	@GetMapping(value = "/expose-enquiry/{customerID}")
 	public ResponseEntity<Enquiry> getEnquiry(@PathVariable Integer customerID) throws EnquiryNotFoundException {
-		Enquiry enquiry2 = enquiryService.getEnquiry(customerID);
-		if(enquiry2!=null)
-		{
-			return new ResponseEntity<Enquiry>(enquiry2, HttpStatus.OK);
-		
+		Enquiry getEnquiry = enquiryService.getEnquiry(customerID);
+		if (getEnquiry != null) {
+			return new ResponseEntity<Enquiry>(getEnquiry, HttpStatus.OK);
+
 		}
-		 throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID: " + customerID);
-		
+		throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID");
 
 	}
 
@@ -99,4 +102,29 @@ public class EnquiryController {
 		return new ResponseEntity<EnquiryResponseDTO>(saveEnquiryResponseDTO, HttpStatus.CREATED);
 	}
 
+	@GetMapping(value = "/expose-enquiries-by-status/{status}")
+	public ResponseEntity<List<Enquiry>> searchEnquiryByStatus(@PathVariable String status) throws EnquiryNotFoundException {
+		//List<Enquiry> savedEnquiries = enquiryService.searchEnquiryByStatus(status);
+
+		//EnquiryStatus enquiryStatus = EnquiryStatus.valueOf(status.toUpperCase());
+		
+//		if(savedEnquiries!=null)
+//		{
+//		return new ResponseEntity<List<Enquiry>>(savedEnquiries , HttpStatus.OK );
+//	}
+//		throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID");
+//		
+		try {
+	        EnquiryStatus enquiryStatus = EnquiryStatus.valueOf(status.toUpperCase()); // Convert string to Enum
+	        List<Enquiry> savedEnquiries = enquiryService.searchEnquiryByStatus(enquiryStatus);
+
+	        if (savedEnquiries != null && !savedEnquiries.isEmpty()) {
+	            return new ResponseEntity<>(savedEnquiries, HttpStatus.OK);
+	        }
+	        throw new EnquiryNotFoundException("No enquiries found for status: " + status);
+	    } catch (IllegalArgumentException e) {
+	        throw new IllegalArgumentException("Invalid status value: " + status);
+	    }
+		
+}
 }
