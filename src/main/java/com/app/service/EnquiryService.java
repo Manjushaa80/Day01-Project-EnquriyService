@@ -15,7 +15,7 @@ public interface EnquiryService {
 	Enquiry addData(Enquiry enquiry);
 	Enquiry getEnquiry(Integer customerID);
 
-	List<Enquiry> searchEnquiryByStatus(EnquiryStatus enquiryStatus);
+	List<Enquiry> findEnquiriesByStatus(String status);
 	
 
 }

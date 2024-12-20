@@ -13,10 +13,10 @@ import com.app.service.EnquiryService;
 public class EnquiryServiceImpl implements EnquiryService {
 
 	private EnquiryRepository enquiryRepository;
-
-	public EnquiryServiceImpl(EnquiryRepository homeLoanRepository) {
+	
+    public EnquiryServiceImpl(EnquiryRepository enquiryRepository) {
 		super();
-		this.enquiryRepository = homeLoanRepository;
+		this.enquiryRepository = enquiryRepository;
 	}
 
 	@Override
@@ -80,6 +80,9 @@ public class EnquiryServiceImpl implements EnquiryService {
 			if (enquiryDetails.getLastName() != null) {
 				existingsavedData.setLastName(enquiryDetails.getLastName());
 			}
+			if(enquiryDetails.getAge() != null) {
+				existingsavedData.setAge(enquiryDetails.getAge());
+			}
 			if (enquiryDetails.getMobileNo() != null) {
 				existingsavedData.setMobileNo(enquiryDetails.getMobileNo());
 			}
@@ -99,15 +102,9 @@ public class EnquiryServiceImpl implements EnquiryService {
 		return null;
 	}
 
-//	@Override
-//	public List<Enquiry> searchEnquiryByStatus(String status) {
-//
-//		return enquiryRepository.findAllByStatus(status);
-//	}
-
 	@Override
-	public List<Enquiry> searchEnquiryByStatus(EnquiryStatus enquiryStatus) {
-
-		return enquiryRepository.findAllByStatus(enquiryStatus);
+	public List<Enquiry> findEnquiriesByStatus(String status) {
+	      
+		return enquiryRepository.findAllByStatus(EnquiryStatus.valueOf(status));
 	}
 }

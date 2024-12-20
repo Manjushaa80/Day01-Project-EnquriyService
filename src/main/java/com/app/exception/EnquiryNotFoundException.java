@@ -1,6 +1,6 @@
 package com.app.exception;
 
-public class EnquiryNotFoundException extends Throwable {
+public class EnquiryNotFoundException extends RuntimeException{
 	
 	public EnquiryNotFoundException(String msg) {
 
