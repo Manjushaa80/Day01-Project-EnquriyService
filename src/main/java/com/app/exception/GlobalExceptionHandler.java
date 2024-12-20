@@ -9,12 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	
-	@ExceptionHandler(EnquiryNotFoundException.class)
-	public ResponseEntity<String>EnquiryNotFoundException(EnquiryNotFoundException ae)
-	{
-		String msg ="Enquiry Not Found for Customer ID";
-		return new ResponseEntity<String>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+	@ExceptionHandler(value = EnquiryNotFoundException.class)
+	public ResponseEntity<String> EnquiryNotFoundException(EnquiryNotFoundException ef){
 		
+		return new ResponseEntity<String>(ef.getMessage(),HttpStatus.NOT_FOUND);
 	}
 
 

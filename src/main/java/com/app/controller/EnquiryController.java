@@ -91,10 +91,18 @@ public class EnquiryController {
 			return new ResponseEntity<Enquiry>(getEnquiry, HttpStatus.OK);
 
 		}
-		throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID");
-
+		throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID : " + customerID);
+    }
+	
+	@GetMapping(value = "expose-enquiries-by-status/{status}")
+	public ResponseEntity<List<Enquiry>> exposeEnquiryByStatus(@PathVariable ("status") String status){
+		List<Enquiry> enquiries= enquiryService.findEnquiriesByStatus(status);
+		if(enquiries.size()>0) {
+			return ResponseEntity.ok().body(enquiries);
+		}else
+			throw new EnquiryNotFoundException("Enquiry not found on status "+status);
 	}
-
+	
 	@PostMapping(value = "/save-enquiry")
 	public ResponseEntity<EnquiryResponseDTO> saveEnquiry(@RequestBody EnquiryRequestDTO enquiryRequestDTO) {
 		EnquiryResponseDTO saveEnquiryResponseDTO = enquiryResource.saveEnquiry(enquiryRequestDTO);
@@ -102,29 +110,4 @@ public class EnquiryController {
 		return new ResponseEntity<EnquiryResponseDTO>(saveEnquiryResponseDTO, HttpStatus.CREATED);
 	}
 
-	@GetMapping(value = "/expose-enquiries-by-status/{status}")
-	public ResponseEntity<List<Enquiry>> searchEnquiryByStatus(@PathVariable String status) throws EnquiryNotFoundException {
-		//List<Enquiry> savedEnquiries = enquiryService.searchEnquiryByStatus(status);
-
-		//EnquiryStatus enquiryStatus = EnquiryStatus.valueOf(status.toUpperCase());
-		
-//		if(savedEnquiries!=null)
-//		{
-//		return new ResponseEntity<List<Enquiry>>(savedEnquiries , HttpStatus.OK );
-//	}
-//		throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID");
-//		
-		try {
-	        EnquiryStatus enquiryStatus = EnquiryStatus.valueOf(status.toUpperCase()); // Convert string to Enum
-	        List<Enquiry> savedEnquiries = enquiryService.searchEnquiryByStatus(enquiryStatus);
-
-	        if (savedEnquiries != null && !savedEnquiries.isEmpty()) {
-	            return new ResponseEntity<>(savedEnquiries, HttpStatus.OK);
-	        }
-	        throw new EnquiryNotFoundException("No enquiries found for status: " + status);
-	    } catch (IllegalArgumentException e) {
-	        throw new IllegalArgumentException("Invalid status value: " + status);
-	    }
-		
-}
 }
