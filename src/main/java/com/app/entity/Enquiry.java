@@ -12,9 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 
 import lombok.Data;
 
+@DynamicUpdate
 @Entity
 @Data
 public class Enquiry {
