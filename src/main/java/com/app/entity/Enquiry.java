@@ -12,9 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 
 import lombok.Data;
 
+@DynamicUpdate
 @Entity
 @Data
 public class Enquiry {
@@ -31,7 +33,7 @@ public class Enquiry {
 	private Date enquiryDateTime;
 	@Enumerated(EnumType.STRING)
 	private EnquiryStatus status;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE.DETACH.REMOVE.REFRESH)
 	private Cibil cibil;
 
 }
