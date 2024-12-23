@@ -52,7 +52,7 @@ public class EnquiryController {
 		throw new EnquiryNotFoundException("Enquiry not found");
 	}
 
-	@PatchMapping(value = "/update-enquiry-status/{customerID}")
+	@PatchMapping(value = "/update-enquiry/{customerID}")
 	public ResponseEntity<Enquiry> updateEnquiry(@PathVariable int customerID, @RequestBody Enquiry enquiryDetails)
 			throws EnquiryNotFoundException {
 
@@ -85,10 +85,10 @@ public class EnquiryController {
 	}
 
 	@GetMapping(value = "/expose-enquiry/{customerID}")
-	public ResponseEntity<Enquiry> getEnquiry(@PathVariable Integer customerID) throws EnquiryNotFoundException {
-		Enquiry getEnquiry = enquiryService.getEnquiry(customerID);
+	public ResponseEntity<EnquiryResponseDTO> getEnquiry(@PathVariable Integer customerID) throws EnquiryNotFoundException {
+		EnquiryResponseDTO getEnquiry = enquiryService.getEnquiryDetails(customerID);
 		if (getEnquiry != null) {
-			return new ResponseEntity<Enquiry>(getEnquiry, HttpStatus.OK);
+			return new ResponseEntity<EnquiryResponseDTO>(getEnquiry, HttpStatus.OK);
 
 		}
 		throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID : " + customerID);
@@ -106,8 +106,14 @@ public class EnquiryController {
 	@PostMapping(value = "/save-enquiry")
 	public ResponseEntity<EnquiryResponseDTO> saveEnquiry(@RequestBody EnquiryRequestDTO enquiryRequestDTO) {
 		EnquiryResponseDTO saveEnquiryResponseDTO = enquiryResource.saveEnquiry(enquiryRequestDTO);
-
+       
 		return new ResponseEntity<EnquiryResponseDTO>(saveEnquiryResponseDTO, HttpStatus.CREATED);
 	}
-
+	
+	@PatchMapping(value = "/update-enquiry-status/{customerID}/{status}")
+	public ResponseEntity<Enquiry> updateEnquiryStatus(@PathVariable Integer customerID,@PathVariable String status){
+		Enquiry updateEnquiry = enquiryService.updateEnquiry(customerID,status);
+		
+		return new ResponseEntity<Enquiry>(updateEnquiry,HttpStatus.OK);
+	}
 }

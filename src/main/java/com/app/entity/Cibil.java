@@ -15,6 +15,7 @@ import lombok.Data;
 @Entity
 @Data
 public class Cibil {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer cibilId;

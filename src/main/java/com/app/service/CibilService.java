@@ -6,4 +6,6 @@ public interface CibilService {
 
 	Cibil saveEnquiry(Cibil cibil);
 
+	Cibil generateRandomCibilScore(Cibil cibil);
+
 }
