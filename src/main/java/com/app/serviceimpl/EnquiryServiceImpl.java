@@ -2,20 +2,33 @@ package com.app.serviceimpl;
 
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
+import com.app.dto.EnquiryResponseDTO;
+import com.app.entity.Cibil;
 import com.app.entity.Enquiry;
+import com.app.entity.EnquiryStatus;
 import com.app.repository.EnquiryRepository;
+import com.app.service.CommunicationService;
 import com.app.service.EnquiryService;
 
 @Service
 public class EnquiryServiceImpl implements EnquiryService {
 
+	@Autowired
+	private ModelMapper modelMapper;
+
 	private EnquiryRepository enquiryRepository;
 
-	public EnquiryServiceImpl(EnquiryRepository homeLoanRepository) {
+	@Autowired
+	private CommunicationService communicationService;
+
+	public EnquiryServiceImpl(EnquiryRepository enquiryRepository) {
 		super();
-		this.enquiryRepository = homeLoanRepository;
+		this.enquiryRepository = enquiryRepository;
 	}
 
 	@Override
@@ -30,7 +43,12 @@ public class EnquiryServiceImpl implements EnquiryService {
 
 	public Enquiry saveEnquiry(Enquiry enquiry) {
 
-		return enquiryRepository.save(enquiry);
+		Enquiry saveEnquiry = enquiryRepository.save(enquiry);
+
+		if (saveEnquiry != null && saveEnquiry.getCustomerID() != 0) {
+			communicationService.sendWelcomeMail(saveEnquiry);
+		}
+		return saveEnquiry;
 	}
 
 	@Override
@@ -40,14 +58,39 @@ public class EnquiryServiceImpl implements EnquiryService {
 
 	@Override
 	public Enquiry addData(Enquiry enquiry) {
+
+		// enquiry.setStatus(EnquiryStatus.Register);
+
 		return enquiryRepository.save(enquiry);
 	}
 
 	@Override
+	public EnquiryResponseDTO getEnquiryDetails(Integer customerID) {
+		Optional<Enquiry> optional = enquiryRepository.findById(customerID);
+		if (optional.isPresent()) {
+			Enquiry enquiry = optional.get();
+			Cibil cibil = enquiry.getCibil();
+			EnquiryResponseDTO enquiryResponseDTO = modelMapper.map(enquiry, EnquiryResponseDTO.class);
+
+			enquiryResponseDTO.setCibilRemark(cibil.getCibilRemark());
+			enquiryResponseDTO.setCibilScore(cibil.getCibilScore());
+
+			return enquiryResponseDTO;
+		}
+		return null;
+	}
+
+	@Override
 	public Enquiry getEnquiry(Integer customerID) {
-		Optional<Enquiry> enquiryid = enquiryRepository.findById(customerID);
-		if (enquiryid.isPresent()) {
-			return enquiryid.get();
+		Optional<Enquiry> optional = enquiryRepository.findById(customerID);
+		if (optional.isPresent()) {
+			Enquiry enquiry = optional.get();
+			Cibil cibil = enquiry.getCibil();
+			EnquiryResponseDTO enquiryResponseDTO = modelMapper.map(enquiry, EnquiryResponseDTO.class);
+
+			Enquiry enq = modelMapper.map(cibil, Enquiry.class);
+
+			return enq;
 		}
 		return null;
 	}
@@ -76,6 +119,9 @@ public class EnquiryServiceImpl implements EnquiryService {
 			if (enquiryDetails.getLastName() != null) {
 				existingsavedData.setLastName(enquiryDetails.getLastName());
 			}
+			if (enquiryDetails.getAge() != null) {
+				existingsavedData.setAge(enquiryDetails.getAge());
+			}
 			if (enquiryDetails.getMobileNo() != null) {
 				existingsavedData.setMobileNo(enquiryDetails.getMobileNo());
 			}
@@ -84,7 +130,9 @@ public class EnquiryServiceImpl implements EnquiryService {
 			}
 			if (enquiryDetails.getEmail() != null) {
 				existingsavedData.setEmail(enquiryDetails.getEmail());
-
+			}
+			if (enquiryDetails.getStatus() != null) {
+				existingsavedData.setStatus(enquiryDetails.getStatus());
 			}
 
 			return enquiryRepository.save(existingsavedData);
@@ -92,4 +140,24 @@ public class EnquiryServiceImpl implements EnquiryService {
 
 		return null;
 	}
+
+	@Override
+	public List<Enquiry> findEnquiriesByStatus(String status) {
+
+		return enquiryRepository.findAllByStatus(EnquiryStatus.valueOf(status));
+	}
+
+	@Override
+	public Enquiry updateEnquiry(int customerID, String status) {
+
+		if (enquiryRepository.existsById(customerID)) {
+			Enquiry enquiry = enquiryRepository.findById(customerID).get();
+			enquiry.setStatus(EnquiryStatus.valueOf(status));
+			Enquiry updatedEnquiry = enquiryRepository.save(enquiry);
+			return updatedEnquiry;
+		}
+
+		return null;
+	}
+
 }
