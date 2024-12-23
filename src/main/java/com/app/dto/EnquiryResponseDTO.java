@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class EnquiryResponseDTO
 {
-
 	private String firstName;
 	private String lastName;
 	private Integer age;
@@ -14,7 +13,6 @@ public class EnquiryResponseDTO
 	private Long mobileNo;
 	private String pancardNo;
 	private EnquiryStatus status;
-
-
-
+	private String cibilRemark;
+	private Integer cibilScore;
 }
