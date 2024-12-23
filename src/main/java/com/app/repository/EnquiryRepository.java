@@ -12,5 +12,6 @@ import com.app.entity.EnquiryStatus;
 public interface EnquiryRepository extends JpaRepository<Enquiry, Integer> {
 
 	public List<Enquiry> findAllByStatus(EnquiryStatus status);
+	
 
 }
