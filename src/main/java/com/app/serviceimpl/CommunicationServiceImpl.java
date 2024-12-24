@@ -25,10 +25,6 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 		String mailFeedback = template.postForObject("http://localhost:9092/mail/send-simple-mail", mailDto, String.class);
 		
-//		if(!mailFeedback.equals("Mail Sent"))
-//		{
-//			
-//		}
 				
 	}
 
