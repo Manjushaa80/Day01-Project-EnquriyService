@@ -18,14 +18,10 @@ public class CibilController {
 	@Autowired
 	private EnquiryResource enquiryResource;
 
-	@Autowired
-	private CibilService cibilService;
-
 	@PostMapping(value = "/cibils")
-	public ResponseEntity<EnquiryResponseDTO> saveCibilDetails(@RequestBody CibilRequestDTO cibilRequestDTO) {
-		enquiryResource.generatedRandomCibilScore(cibilRequestDTO);
-
-		return new ResponseEntity<EnquiryResponseDTO>(HttpStatus.CREATED);
+	public ResponseEntity<Cibil> saveCibilDetails(@RequestBody CibilRequestDTO cibilRequestDTO) {
+		Cibil cibil = enquiryResource.generatedRandomCibilScore(cibilRequestDTO);
+		return new ResponseEntity<Cibil>(cibil, HttpStatus.CREATED);
 	}
 
 }
