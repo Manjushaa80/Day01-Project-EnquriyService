@@ -31,20 +31,18 @@ public class EnquiryResource {
 		Enquiry saveEnquiry = enquiryService.saveEnquiry(enquiry);
 		EnquiryResponseDTO saveEnquiryResponseDTO = modelMapper.map(saveEnquiry, EnquiryResponseDTO.class);
 		return saveEnquiryResponseDTO;
-
 	}
 
-	public void generatedRandomCibilScore(CibilRequestDTO cibilRequestDTO) {
+	public Cibil generatedRandomCibilScore(CibilRequestDTO cibilRequestDTO) {
 
-		Cibil cibil = modelMapper.map(cibilRequestDTO, Cibil.class);
-
-		Cibil savedCibil = cibilService.generateRandomCibilScore(cibil);
+		Cibil savedCibil = cibilService.generateRandomCibilScore();
 
 		Enquiry exitingEnquiry = enquiryService.getEnquiry(cibilRequestDTO.getCustomerID());
 
 		System.out.println(cibilRequestDTO.getCustomerID());
 		exitingEnquiry.setCibil(savedCibil);
 		enquiryService.saveEnquiry(exitingEnquiry);
+		return savedCibil;
 	}
 
 }

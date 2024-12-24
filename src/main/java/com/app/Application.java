@@ -9,14 +9,11 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class Application {
 	@Bean
-	public ModelMapper modelMapper()
-	{
-		ModelMapper m=new ModelMapper();
+	public ModelMapper modelMapper() {
+		ModelMapper m = new ModelMapper();
 		m.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
 		return m;
-		//return new ModelMapper();
-		
+		// return new ModelMapper();
 	}
 
 	public static void main(String[] args) {

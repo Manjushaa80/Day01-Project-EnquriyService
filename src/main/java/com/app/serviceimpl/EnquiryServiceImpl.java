@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+import com.app.dto.EnquiryRequestDTO;
 import com.app.dto.EnquiryResponseDTO;
 import com.app.entity.Cibil;
 import com.app.entity.Enquiry;
 import com.app.entity.EnquiryStatus;
+import com.app.exception.AgeInvalidException;
 import com.app.repository.EnquiryRepository;
 import com.app.service.CommunicationService;
 import com.app.service.EnquiryService;
@@ -48,7 +50,9 @@ public class EnquiryServiceImpl implements EnquiryService {
 		if (saveEnquiry != null && saveEnquiry.getCustomerID() != 0) {
 			communicationService.sendWelcomeMail(saveEnquiry);
 		}
+
 		return saveEnquiry;
+
 	}
 
 	@Override
@@ -85,12 +89,7 @@ public class EnquiryServiceImpl implements EnquiryService {
 		Optional<Enquiry> optional = enquiryRepository.findById(customerID);
 		if (optional.isPresent()) {
 			Enquiry enquiry = optional.get();
-			Cibil cibil = enquiry.getCibil();
-			EnquiryResponseDTO enquiryResponseDTO = modelMapper.map(enquiry, EnquiryResponseDTO.class);
-
-			Enquiry enq = modelMapper.map(cibil, Enquiry.class);
-
-			return enq;
+			return enquiry;
 		}
 		return null;
 	}

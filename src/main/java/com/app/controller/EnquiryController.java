@@ -18,6 +18,7 @@ import com.app.dto.EnquiryRequestDTO;
 import com.app.dto.EnquiryResponseDTO;
 import com.app.entity.Enquiry;
 import com.app.entity.EnquiryStatus;
+import com.app.exception.AgeInvalidException;
 import com.app.exception.EnquiryNotFoundException;
 import com.app.resource.EnquiryResource;
 import com.app.service.EnquiryService;
@@ -85,35 +86,41 @@ public class EnquiryController {
 	}
 
 	@GetMapping(value = "/expose-enquiry/{customerID}")
-	public ResponseEntity<EnquiryResponseDTO> getEnquiry(@PathVariable Integer customerID) throws EnquiryNotFoundException {
+	public ResponseEntity<EnquiryResponseDTO> getEnquiry(@PathVariable Integer customerID)
+			throws EnquiryNotFoundException {
 		EnquiryResponseDTO getEnquiry = enquiryService.getEnquiryDetails(customerID);
 		if (getEnquiry != null) {
 			return new ResponseEntity<EnquiryResponseDTO>(getEnquiry, HttpStatus.OK);
 
 		}
 		throw new EnquiryNotFoundException("Enquiry Not Found for Customer ID : " + customerID);
-    }
-	
-	@GetMapping(value = "expose-enquiries-by-status/{status}")
-	public ResponseEntity<List<Enquiry>> exposeEnquiryByStatus(@PathVariable ("status") String status){
-		List<Enquiry> enquiries= enquiryService.findEnquiriesByStatus(status);
-		if(enquiries.size()>0) {
-			return ResponseEntity.ok().body(enquiries);
-		}else
-			throw new EnquiryNotFoundException("Enquiry not found on status "+status);
 	}
-	
+
+	@GetMapping(value = "expose-enquiries-by-status/{status}")
+	public ResponseEntity<List<Enquiry>> exposeEnquiryByStatus(@PathVariable("status") String status) {
+		List<Enquiry> enquiries = enquiryService.findEnquiriesByStatus(status);
+		if (enquiries.size() > 0) {
+			return ResponseEntity.ok().body(enquiries);
+		} else
+			throw new EnquiryNotFoundException("Enquiry not found on status " + status);
+	}
+
 	@PostMapping(value = "/save-enquiry")
 	public ResponseEntity<EnquiryResponseDTO> saveEnquiry(@RequestBody EnquiryRequestDTO enquiryRequestDTO) {
-		EnquiryResponseDTO saveEnquiryResponseDTO = enquiryResource.saveEnquiry(enquiryRequestDTO);
-       
-		return new ResponseEntity<EnquiryResponseDTO>(saveEnquiryResponseDTO, HttpStatus.CREATED);
+
+		if (enquiryRequestDTO.getAge() >= 22) {
+			EnquiryResponseDTO saveEnquiryResponseDTO = enquiryResource.saveEnquiry(enquiryRequestDTO);
+
+			return new ResponseEntity<EnquiryResponseDTO>(saveEnquiryResponseDTO, HttpStatus.CREATED);
+		} else
+			throw new AgeInvalidException("Age is Not applicable for loan application");
+
 	}
-	
+
 	@PatchMapping(value = "/update-enquiry-status/{customerID}/{status}")
-	public ResponseEntity<Enquiry> updateEnquiryStatus(@PathVariable Integer customerID,@PathVariable String status){
-		Enquiry updateEnquiry = enquiryService.updateEnquiry(customerID,status);
-		
-		return new ResponseEntity<Enquiry>(updateEnquiry,HttpStatus.OK);
+	public ResponseEntity<Enquiry> updateEnquiryStatus(@PathVariable Integer customerID, @PathVariable String status) {
+		Enquiry updateEnquiry = enquiryService.updateEnquiry(customerID, status);
+
+		return new ResponseEntity<Enquiry>(updateEnquiry, HttpStatus.OK);
 	}
 }

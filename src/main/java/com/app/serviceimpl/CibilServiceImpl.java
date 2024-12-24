@@ -20,13 +20,9 @@ public class CibilServiceImpl implements CibilService {
 	}
 
 	@Override
-	public Cibil saveEnquiry(Cibil cibil) {
-
-		return cibilRepository.save(cibil);
-	}
-
-	@Override
-	public Cibil generateRandomCibilScore(Cibil cibil) {
+	public Cibil generateRandomCibilScore() {
+		
+		Cibil cibil = new Cibil();
 		Random random = new Random();
 
 		int x = random.nextInt(601) + 300;
